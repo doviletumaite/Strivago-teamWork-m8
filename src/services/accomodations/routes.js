@@ -1,5 +1,6 @@
 import express from "express";
 import createHttpError from "http-errors";
+import { HostOnly } from "../../midllewares/hostOnly.js";
 import accomodationModel from "../accomodations/schema.js";
 import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
 
