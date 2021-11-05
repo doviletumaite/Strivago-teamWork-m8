@@ -26,4 +26,15 @@ accomodationsRouter.get("/", tokenAuthMiddleware, async (req, res, next) => {
   }
 );
 
+accomodationsRouter.get("/:accomodationId", tokenAuthMiddleware, async (req, res, next) => {
+  try {
+      const accomodation = await accomodationModel.findById({_id: req.params.accomodationId});
+      res.send(accomodation);
+  } catch (error) {
+    next(error);
+  }
+}
+);
+
+
 export default accomodationsRouter;

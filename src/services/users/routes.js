@@ -7,6 +7,15 @@ import { generateToken } from "../../midllewares/auth/tokenAuth.js";
 
 const usersRouter = express.Router();
 
+usersRouter.get("/me", tokenAuthMiddleware, async (req, res, next) => {
+  try {
+      res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
+}
+);
+
 usersRouter.post("/register", async (req, res, next) => {
   try {
     const newUser = new userModel(req.body);
@@ -52,6 +61,7 @@ usersRouter.get("/", async (req, res, next) => {
   }
 }
 );
+
 
 export default usersRouter;
 

@@ -13,6 +13,7 @@ const userSchema = new Schema({
   accomodations: [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
 });
 
+// [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
 // #1 hash password before saving user in DB ->
 userSchema.pre("save", async function (next) {
   const newUser = this;
@@ -50,4 +51,3 @@ userSchema.statics.checkCredentials = async function (email, password) {
 };
 
 export default model("User", userSchema);
-
