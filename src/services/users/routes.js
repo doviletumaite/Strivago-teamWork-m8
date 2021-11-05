@@ -57,5 +57,17 @@ usersRouter.get(
   }
 );
 
+usersRouter.get(
+  "/me/accomodation",
+  async (req, res, next) => {
+    try {
+      const user = await userModel.find({}, {__v:0}).populate('accomodations')
+        res.send(user)
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default usersRouter;
 
