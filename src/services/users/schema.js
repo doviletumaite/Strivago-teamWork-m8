@@ -8,7 +8,7 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, default: "Guest", enum: ["Host", "Guest"] },
-  accomodations: [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
+  accomodations:  [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
 });
 
 // #1 hash password before saving user in DB ->
