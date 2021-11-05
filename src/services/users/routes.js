@@ -33,9 +33,7 @@ usersRouter.post("/login", tokenAuthMiddleware, async (req, res, next) => {
   }
 })
 
-usersRouter.get(
-  "/:userId",
-  async (req, res, next) => {
+usersRouter.get("/:userId", async (req, res, next) => {
     try {
         const user = await userModel.findById({_id: req.params.userId}).populate({path: 'accomodations', select: "name"})
         res.send(user)
@@ -43,6 +41,16 @@ usersRouter.get(
       next(error);
     }
   }
+);
+
+usersRouter.get("/", async (req, res, next) => {
+  try {
+      const users = await userModel.find();
+      res.send(users);
+  } catch (error) {
+    next(error);
+  }
+}
 );
 
 export default usersRouter;

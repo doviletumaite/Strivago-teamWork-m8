@@ -1,6 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import accomodationModel from "../accomodations/schema.js";
+import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
 
 const accomodationsRouter = express.Router();
 
@@ -14,12 +15,11 @@ accomodationsRouter.post("/register", async (req, res, next) => {
   }
 });
 
-accomodationsRouter.get(
-  "/",
-  async (req, res, next) => {
+// return FULL LIST of accommodations
+accomodationsRouter.get("/", tokenAuthMiddleware, async (req, res, next) => {
     try {
-      const accomodations = await accomodationModel.find();
-      res.send(accomodations);
+        const accomodations = await accomodationModel.find();
+        res.send(accomodations);
     } catch (error) {
       next(error);
     }
