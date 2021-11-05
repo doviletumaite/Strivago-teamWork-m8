@@ -17,8 +17,8 @@ server.use(express.json())
 
 // ******************** ROUTES ******************************
 
-// server.use("/users", usersRouter)
-// server.use("/accomodations", accomodationsRouter)
+server.use("/users", usersRouter)
+server.use("/accomodations", accomodationsRouter)
 
 // ********************** ERROR HANDLERS *************************
 
