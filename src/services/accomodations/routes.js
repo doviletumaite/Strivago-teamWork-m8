@@ -16,7 +16,7 @@ accomodationsRouter.post("/register", async (req, res, next) => {
 });
 
 accomodationsRouter.get(
-  "/", HostOnly,
+  "/", 
   async (req, res, next) => {
     try {
       const accomodations = await accomodationModel.find();
