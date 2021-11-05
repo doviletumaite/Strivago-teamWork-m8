@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/doviletumaite/strivago-teamWork-m8-.git"
+    "url": "git+https://github.com/doviletumaite/strivago-teamwork-m8.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/doviletumaite/strivago-teamWork-m8-/issues"
+    "url": "https://github.com/doviletumaite/strivago-teamwork-m8/issues"
   },
-  "homepage": "https://github.com/doviletumaite/strivago-teamWork-m8-#readme",
+  "homepage": "https://github.com/doviletumaite/strivago-teamwork-m8#readme",
   "dependencies": {
     "atob": "^2.1.2",
     "bcrypt": "^5.0.1",
