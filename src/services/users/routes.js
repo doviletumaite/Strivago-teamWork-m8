@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import userModel from "../users/schema.js";
 import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
 import { generateToken } from "../../midllewares/auth/tokenAuth.js";
+import { HostOnly } from "../../midllewares/hostOnly.js";
 
 
 const usersRouter = express.Router();
@@ -34,7 +35,7 @@ usersRouter.post("/login", tokenAuthMiddleware, async (req, res, next) => {
 })
 
 usersRouter.get(
-  "/:userId",
+  "/:userId",  tokenAuthMiddleware, HostOnly,
   async (req, res, next) => {
     try {
         const user = await userModel.findById({_id: req.params.userId}).populate({path: 'accomodations', select: "name"})
@@ -46,9 +47,10 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  "/",
+  "/", 
   async (req, res, next) => {
     try {
+      console.log(req.body)
       const user = await userModel.find({}, {__v:0}).populate('accomodations')
         res.send(user)
     } catch (error) {
