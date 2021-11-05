@@ -1,5 +1,6 @@
 import express from "express";
 import createHttpError from "http-errors";
+import { HostOnly } from "../../midllewares/hostOnly.js";
 import accomodationModel from "../accomodations/schema.js";
 
 const accomodationsRouter = express.Router();
@@ -15,7 +16,7 @@ accomodationsRouter.post("/register", async (req, res, next) => {
 });
 
 accomodationsRouter.get(
-  "/",
+  "/", HostOnly,
   async (req, res, next) => {
     try {
       const accomodations = await accomodationModel.find();
