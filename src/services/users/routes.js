@@ -1,6 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import userModel from "../users/schema.js";
+import accomodationModel from "../accomodations/schema.js";
 import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
 import { generateToken } from "../../midllewares/auth/tokenAuth.js";
 import { HostOnly } from "../../midllewares/hostOnly.js";
@@ -11,6 +12,18 @@ const usersRouter = express.Router();
 usersRouter.get("/me", tokenAuthMiddleware, async (req, res, next) => {
   try {
       res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
+}
+);
+
+usersRouter.get("/me/accomodation", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+  try {
+    const userId = req.user._id
+    console.log(userId)
+    const accomodationsofUser = await accomodationModel.find({host: userId})
+    res.send(accomodationsofUser)
   } catch (error) {
     next(error);
   }
@@ -56,7 +69,7 @@ usersRouter.get("/:userId", tokenAuthMiddleware, HostOnly, async (req, res, next
 
 usersRouter.get("/", async (req, res, next) => {
   try {
-      const users = await userModel.find();
+      const users = await userModel.find().populate('accomodations');
       res.send(users);
   } catch (error) {
     next(error);
@@ -64,15 +77,6 @@ usersRouter.get("/", async (req, res, next) => {
 }
 );
 
-usersRouter.get("/me/accomodation", async (req, res, next) => {
-    try {
-      const user = await userModel.find({}, {__v:0}).populate('accomodations')
-        res.send(user)
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
 export default usersRouter;
 
