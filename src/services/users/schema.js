@@ -9,11 +9,10 @@ const userSchema = new Schema({
   surname: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  role: { type: String, default: "Guest", enum: ["Host", "Guest"] },
-  accomodations: [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
+  role: { type: String, default: "Guest", enum: ["Host", "Guest"] }
 });
 
-// [{ type: Schema.Types.ObjectId, ref: "Accomodation" }]
+
 // #1 hash password before saving user in DB ->
 userSchema.pre("save", async function (next) {
   const newUser = this;

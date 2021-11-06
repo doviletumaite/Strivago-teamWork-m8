@@ -1,16 +1,16 @@
 import express from "express";
 import createHttpError from "http-errors";
-import { HostOnly } from "../../midllewares/hostOnly.js";
+import { HostOnly } from "../../midllewares/auth/HostOnly.js";
 import accomodationModel from "../accomodations/schema.js";
-import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
+import { tokenAuthMiddleware } from "../../midllewares/auth/tokenMiddleware.js";
 
 const accomodationsRouter = express.Router();
 
-accomodationsRouter.post("/register", async (req, res, next) => {
+accomodationsRouter.post("/register", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
   try {
-    const accomodation = new accomodationModel(req.body);
-    const newAccomodation = await accomodation.save();
-    res.send(newAccomodation);
+    const newAccomodation = new accomodationModel(req.body);
+    const saveAccomodation = await newAccomodation.save();
+    res.send(saveAccomodation);
   } catch (error) {
     next(error);
   }
@@ -19,7 +19,7 @@ accomodationsRouter.post("/register", async (req, res, next) => {
 // return FULL LIST of accommodations
 accomodationsRouter.get("/", tokenAuthMiddleware, async (req, res, next) => {
     try {
-        const accomodations = await accomodationModel.find();
+        const accomodations = await accomodationModel.find().populate('host');
         res.send(accomodations);
     } catch (error) {
       next(error);
@@ -29,8 +29,48 @@ accomodationsRouter.get("/", tokenAuthMiddleware, async (req, res, next) => {
 
 accomodationsRouter.get("/:accomodationId", tokenAuthMiddleware, async (req, res, next) => {
   try {
-      const accomodation = await accomodationModel.findById({_id: req.params.accomodationId});
-      res.send(accomodation);
+    const accomodation = await accomodationModel.findById(req.params.accomodationId).populate('host');
+      if(accomodation){
+        console.log(accomodation)
+        res.send(accomodation);
+      } else {
+        next(createHttpError(404, "Accomodation not found!"))
+      }
+  } catch (error) {
+    next(error);
+  }
+}
+);
+
+accomodationsRouter.put("/:accomodationId", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+  try {
+    const editedAccomodation = await accomodationModel.findByIdAndUpdate(
+      req.params.accomodationId,
+      req.body,
+      {new: true}
+    )
+    // .populate('host');
+      if(editedAccomodation) {
+        res.status(200).send(editedAccomodation);
+      } else {
+        next(createHttpError(404, "Accomodation not found!"))
+      }
+  } catch (error) {
+    next(error);
+  }
+}
+);
+
+accomodationsRouter.delete("/:accomodationId", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+  try {
+    const deleteAccomodation = await accomodationModel.findByIdAndDelete(
+      req.params.accomodationId
+    );
+    if(deleteAccomodation) {
+      res.status(204).send("Deleted!");
+    } else {
+      next(createHttpError(404, "Accomodation not found!"))
+    }
   } catch (error) {
     next(error);
   }

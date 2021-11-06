@@ -1,34 +1,35 @@
 import express from "express";
 import createHttpError from "http-errors";
 import userModel from "../users/schema.js";
-import { tokenAuthMiddleware } from "../../midllewares/tokenMiddleware.js";
+import accomodationModel from "../accomodations/schema.js";
+import { tokenAuthMiddleware } from "../../midllewares/auth/tokenMiddleware.js";
 import { generateToken } from "../../midllewares/auth/tokenAuth.js";
-import { HostOnly } from "../../midllewares/hostOnly.js";
+import { HostOnly } from "../../midllewares/auth/HostOnly.js";
+import { userValidation } from "../../midllewares/validation/userValidation.js";
+import { validationResult } from "express-validator"
 
 
 const usersRouter = express.Router();
 
-usersRouter.get("/me", tokenAuthMiddleware, async (req, res, next) => {
+usersRouter.post("/register", userValidation, async (req, res, next) => {
   try {
-      res.send(req.user);
-  } catch (error) {
-    next(error);
-  }
-}
-);
-
-usersRouter.post("/register", async (req, res, next) => {
-  try {
-    const newUser = new userModel(req.body);
-    const token = await generateToken(newUser)
-    const { _id } = await newUser.save();
-    res.send({ _id, token});
+    const errorsList = validationResult(req)
+    if (!errorsList.isEmpty()) {
+      // If we had validation errors --> we need to trigger Bad Request Error Handler
+      next(createHttpError(400, { errorsList }))
+      
+    } else{
+      const newUser = new userModel(req.body);
+      const { _id } = await newUser.save();
+      const accessToken = await generateToken(newUser)
+      res.status(201).send({ _id, accessToken});
+    }
   } catch (error) {
     next(error);
   }
 });
 
-usersRouter.post("/login", tokenAuthMiddleware, async (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body
     const user = await userModel.checkCredentials(email, password)
@@ -43,36 +44,50 @@ usersRouter.post("/login", tokenAuthMiddleware, async (req, res, next) => {
   }
 })
 
-usersRouter.get("/:userId", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
-    try {
-        const user = await userModel.findById({_id: req.params.userId}).populate({path: 'accomodations', select: "name"})
-        res.send(user)
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
+// JUST FOR DEVELOPEMENT PURPOSES
+// usersRouter.get("/", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+//   try {
+//       const users = await userModel.find();
+//       res.send(users);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+// );
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/me", tokenAuthMiddleware, async (req, res, next) => {
   try {
-      const users = await userModel.find();
-      res.send(users);
+      res.send(req.user);
   } catch (error) {
     next(error);
   }
 }
 );
 
-usersRouter.get("/me/accomodation", async (req, res, next) => {
-    try {
-      const user = await userModel.find({}, {__v:0}).populate('accomodations')
-        res.send(user)
-    } catch (error) {
-      next(error);
-    }
+// 🎉 to be checked
+usersRouter.get("/me/accomodation", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+  try {
+    const userId = req.user._id
+    console.log(userId)
+    const accomodationsOfUser = await accomodationModel.find({host: userId})
+    res.send(accomodationsOfUser)
+  } catch (error) {
+    next(error);
   }
+}
 );
+
+// usersRouter.get("/:userId", tokenAuthMiddleware, HostOnly, async (req, res, next) => {
+//     try {
+//         const user = await userModel.findById({_id: req.params.userId}).populate({path: 'accomodations', select: "name"})
+//         res.send(user)
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
+
 
 export default usersRouter;
 
