@@ -36,9 +36,9 @@ export const forbidden = (err, req, res, next) => {
 export const notFound = (err, req, res, next) => {
   console.log(err)
   if(err.status === 404){
-      res.status(404).send({error: error.message || "Bad request, try again!"})
+      res.status(404).send({err: err.message || "Not Found!"})
   } else {
-      next(error)
+      next(err)
   }
 }
 

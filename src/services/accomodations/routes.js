@@ -48,7 +48,8 @@ accomodationsRouter.put("/:accomodationId", tokenAuthMiddleware, HostOnly, async
       req.params.accomodationId,
       req.body,
       {new: true}
-    );
+    )
+    // .populate('host');
       if(editedAccomodation) {
         res.status(200).send(editedAccomodation);
       } else {
