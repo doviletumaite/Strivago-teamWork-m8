@@ -5,7 +5,7 @@ import listEndpoints from "express-list-endpoints"
 import usersRouter from "../src/services/users/routes.js"
 import accomodationsRouter from "../src/services/accomodations/routes.js"
 
-import { unauthorizedHandler, forbiddenHandler, catchAllHandler } from "./errorHandlers.js"
+import { badRequest, unauthorized, forbidden, notFound, serverError} from "./errorHandlers.js"
 
 const server = express()
 const port = process.env.PORT || 3001
@@ -17,14 +17,17 @@ server.use(express.json())
 
 // ******************** ROUTES ******************************
 
-// server.use("/users", usersRouter)
-// server.use("/accomodations", accomodationsRouter)
+server.use("/users", usersRouter)
+server.use("/accomodations", accomodationsRouter)
 
 // ********************** ERROR HANDLERS *************************
 
-server.use(unauthorizedHandler)
-server.use(forbiddenHandler)
-server.use(catchAllHandler)
+
+server.use(badRequest)
+server.use(unauthorized)
+server.use(forbidden)
+server.use(notFound)
+server.use(serverError)
 
 console.table(listEndpoints(server))
 
