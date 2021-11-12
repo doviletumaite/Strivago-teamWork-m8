@@ -1,7 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import { HostOnly } from "../../midllewares/auth/HostOnly.js";
-import accomodationModel from "../accomodations/schema.js";
+import accomodationModel from "./schema.js";
 import { tokenAuthMiddleware } from "../../midllewares/auth/tokenMiddleware.js";
 
 const accomodationsRouter = express.Router();

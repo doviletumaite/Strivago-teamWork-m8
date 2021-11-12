@@ -1,13 +1,20 @@
 import express from "express";
 import createHttpError from "http-errors";
-import userModel from "../users/schema.js";
-import accomodationModel from "../accomodations/schema.js";
-import { tokenAuthMiddleware } from "../../midllewares/auth/tokenMiddleware.js";
-import { generateToken } from "../../midllewares/auth/tokenAuth.js";
-import { HostOnly } from "../../midllewares/auth/HostOnly.js";
-import { userValidation } from "../../midllewares/validation/userValidation.js";
+import userModel from "./schema";
+import accomodationModel from "../accomodations/schema";
+import { tokenAuthMiddleware } from "../../midllewares/auth/tokenMiddleware";
+import { generateToken } from "../../midllewares/auth/tokenAuth";
+import { HostOnly } from "../../midllewares/auth/HostOnly";
+import { userValidation } from "../../midllewares/validation/userValidation";
 import { validationResult } from "express-validator"
 
+interface user {
+  name: string,
+  surname: string,
+  email: string,
+  password: string, 
+  role: string,
+}
 
 const usersRouter = express.Router();
 
